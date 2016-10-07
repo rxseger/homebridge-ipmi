@@ -1,0 +1,26 @@
+{
+  "name": "homebridge-ipmi",
+  "version": "0.0.1",
+  "description": "IPMI plugin for Homebridge",
+  "main": "ipmi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rxserger/homebridge-ipmi.git"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "ipmi"
+  ],
+  "author": "rxseger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rxserger/homebridge-ipmi/issues"
+  },
+  "homepage": "https://github.com/rxserger/homebridge-ipmi#readme",
+  "dependencies": {
+    "node-ipmi": "0.0.5"
+  }
+}
