@@ -63,6 +63,7 @@ class IPMIPlugin
   }
 
   _getSensorValue(ipmiName, cb) {
+    const refreshdata = true; // fix/workaround https://github.com/egeback/node-ipmi/pull/1 Fix callback reuse when not refreshing
     this.server.getSensors((err, sensors) => {
       if (err) return cb(err);
 
@@ -74,7 +75,7 @@ class IPMIPlugin
            return cb(null, sensor.data.value);
          }
        }
-    });
+    }, refreshdata);
   }
 
   getTemperature(ipmiName, cb) {
