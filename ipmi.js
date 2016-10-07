@@ -24,15 +24,15 @@ class IPMIPlugin
 
     // Sensors of interest, mapping IPMI name to Homebridge name
     this.temperatureSensors = config.temperatureSensors ||  {
-                        'System Temp': 'System Temp',
-                        'Peripheral Temp': 'Peripheral Temp'
+                        'System Temp': 'System',
+                        'Peripheral Temp': 'Peripheral'
                 };
     this.fans = config.fans ||  {
-                        'FAN 1': 'FAN 1',
-                        'FAN 2': 'FAN 2',
-                        'FAN 3': 'FAN 3',
-                        'FAN 4': 'FAN 4',
-                        'FAN A': 'FAN A'
+                        'FAN 1': 'Fan 1',
+                        'FAN 2': 'Fan 2',
+                        'FAN 3': 'Fan 3',
+                        'FAN 4': 'Fan 4',
+                        'FAN A': 'Fan A'
                 };
 
     this.sensors = [];
