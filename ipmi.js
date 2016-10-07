@@ -79,11 +79,14 @@ class IPMIPlugin
   }
 
   getTemperature(ipmiName, cb) {
+    console.log('getTemperature',ipmiName,cb);
+    cb(null, 200);
     // degrees C
-    this._getSensorValue(ipmiName, cb)
+    //this._getSensorValue(ipmiName, cb)
   }
 
   getFanOn(ipmiName, cb) {
+    console.log('getFanOn',ipmiName,cb);
     cb(null, true);
 /* TODO
     this._getSensorValue(ipmiName, (err, value) => {
@@ -96,6 +99,8 @@ class IPMIPlugin
   }
 
   getFanRotationSpeed(ipmiName, cb) {
+    console.log('getFanRotationSpeed',ipmiName,cb);
+    //cb(null, 6666);
     // RPM
     this._getSensorValue(ipmiName, cb);
   }
