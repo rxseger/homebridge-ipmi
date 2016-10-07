@@ -64,7 +64,9 @@ class IPMIPlugin
 
   _getSensorValue(ipmiName, cb) {
     console.log('_getSensorValue',ipmiName,cb);
+    const u = Math.random();
     this.server.getSensors((err, sensors) => {
+      console.log('SENSOR CALLBACK FOR ',u,err,sensors);
       if (err) return cb(err);
 
        for (let i = 0; i < sensors.length; ++i) {
@@ -72,6 +74,7 @@ class IPMIPlugin
          const value = sensor.data.value;
 
          if (sensor.data.name === ipmiName) {
+           console.log('CALLING',ipmiName,cb);
            return cb(null, sensor.data.value);
          }
        }
@@ -86,7 +89,6 @@ class IPMIPlugin
   }
 
   getFanOn(ipmiName, cb) {
-    console.log('getFanOn',ipmiName,cb);
     cb(null, true);
 /* TODO
     this._getSensorValue(ipmiName, (err, value) => {
@@ -99,7 +101,9 @@ class IPMIPlugin
   }
 
   getFanRotationSpeed(ipmiName, cb) {
-    console.log('getFanRotationSpeed',ipmiName,cb);
+    if (cb.random) throw new Error(`already called ${cb.random}`);
+    cb.random = Math.random();
+    console.log('getFanRotationSpeed',ipmiName,cb.random);
     //cb(null, 6666);
     // RPM
     this._getSensorValue(ipmiName, cb);
