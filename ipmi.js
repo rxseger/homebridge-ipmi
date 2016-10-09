@@ -1,6 +1,7 @@
 'use strict';
 
 const IPMI = require('node-ipmi');
+const exec = require('child_process').exec; // TODO: move to node-ipmi
 
 let Service, Characteristic;
 
@@ -34,12 +35,24 @@ class IPMIPlugin
                         'FAN 4': 'Fan 4',
                         'FAN A': 'Fan A'
                 };
+    this.identify = config.identify !== undefined ? config.identify : "Blink";
 
     this.server = new IPMI(this.hostname, this.username, this.password);
     this.cache = {};
     this._refreshData();
 
     this.sensors = [];
+
+    this.identifyOn = false; // TODO: get from ipmitool
+    if (this.identify !== null) {
+      const switchSensor = new Service.Switch(this.identify);
+      switchSensor
+        .getCharacteristic(Characteristic.On)
+        .on('get', this.getIdentify.bind(this))
+        .on('set', this.setIdentify.bind(this));
+      this.sensors.push(switchSensor);	     
+    }
+
     Object.keys(this.temperatureSensors).forEach((ipmiName) => {
       const name = this.temperatureSensors[ipmiName];
       const subtype = ipmiName; // subtype must be unique per uuid
@@ -62,6 +75,22 @@ class IPMIPlugin
         .on('get', this.getFanRotationSpeed.bind(this, ipmiName));
       this.sensors.push(fan);
     });
+  }
+
+  getIdentify(cb) {
+    cb(null, this.identifyOn);
+  }
+
+  setIdentify(on, cb) {
+    let cmd;
+    if (on) {
+      // forces on until turned off (otherwise, turns off after an interval)
+      cmd = 'ipmitool chassis identify force';
+    } else {
+      cmd = 'ipmitool chassis identify 0';
+    }
+
+    exec(cmd, () => cb(null)); // TODO: check error
   }
 
   _refreshData() {

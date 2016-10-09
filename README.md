@@ -18,6 +18,7 @@ monitor server temperature and fan sensors via IPMI.
 * `hostname`: server hostname, or null for local
 * `username`: server username, or null for local
 * `password`: server password, or null for local
+* `identify`: name of switch to toggle blinking chassis identification light, or null to disable
 * `temperatureSensors`, `fans`: an object mapping IPMI sensor names, to Homebridge display names
 
 Run `ipmitool sensor` to show the available sensors.
@@ -42,7 +43,8 @@ Example configuration:
                         "FAN 3": "Fan 3",
                         "FAN 4": "Fan 4",
                         "FAN A": "Fan A"
-                }
+                },
+                "identify": "Blink"
         }
     ]
 ```
