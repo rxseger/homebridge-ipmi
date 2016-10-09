@@ -35,6 +35,10 @@ class IPMIPlugin
                         'FAN A': 'Fan A'
                 };
 
+    this.server = new IPMI(this.hostname, this.username, this.password);
+    this.cache = {};
+    this._refreshData();
+
     this.sensors = [];
     Object.keys(this.temperatureSensors).forEach((ipmiName) => {
       const name = this.temperatureSensors[ipmiName];
@@ -58,46 +62,43 @@ class IPMIPlugin
         .on('get', this.getFanRotationSpeed.bind(this, ipmiName));
       this.sensors.push(fan);
     });
-
-    this.server = new IPMI(this.hostname, this.username, this.password);
   }
 
-  _getSensorValue(ipmiName, cb) {
+  _refreshData() {
+    // TODO: throttle refreshes? currently schedules an update for each get (even if redundant)
     const refreshdata = true; // fix/workaround https://github.com/egeback/node-ipmi/pull/1 Fix callback reuse when not refreshing
     this.server.getSensors((err, sensors) => {
-      if (err) return cb(err);
+      if (err) throw err;
 
        for (let i = 0; i < sensors.length; ++i) {
          const sensor = sensors[i];
-         const value = sensor.data.value;
 
-         if (sensor.data.name === ipmiName) {
-           return cb(null, sensor.data.value);
-         }
+         this.cache[sensor.data.name] = sensor.data.value;
        }
+       //console.log('updated cache=',this.cache);
     }, refreshdata);
   }
 
   getTemperature(ipmiName, cb) {
     // degrees C
-    this._getSensorValue(ipmiName, cb)
+    cb(null, this.cache[ipmiName]);
+    this._refreshData();
   }
 
   getFanOn(ipmiName, cb) {
-    this._getSensorValue(ipmiName, (err, value) => {
-      if (err) return cb(err);
-
-      let on = value > 0;
-      cb(null, on);
-    });
+    const on = this.cache[ipmiName] > 0;
+    cb(null, on);
+    this._refreshData();
   }
 
   getFanRotationSpeed(ipmiName, cb) {
     // RPM
-    this._getSensorValue(ipmiName, cb);
+    cb(null, this.cache[ipmiName]);
+    this._refreshData();
   }
 
   getServices() {
     return this.sensors;
+    this._refreshData();
   }
 }
