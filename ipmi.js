@@ -97,13 +97,18 @@ class IPMIPlugin
     // TODO: throttle refreshes? currently schedules an update for each get (even if redundant)
     const refreshdata = true; // fix/workaround https://github.com/egeback/node-ipmi/pull/1 Fix callback reuse when not refreshing
     this.server.getSensors((err, sensors) => {
-      if (err) throw err;
+      if (err) {
+          this.log("Error occurred on refresh. Try again later.");
+          return;
+      }
 
-       for (let i = 0; i < sensors.length; ++i) {
-         const sensor = sensors[i];
+      if (sensors !== null) {}
+        for (let i = 0; i < sensors.length; ++i) {
+          const sensor = sensors[i];
 
-         this.cache[sensor.data.name] = sensor.data.value;
-       }
+          this.cache[sensor.data.name] = sensor.data.value;
+        }
+      }
        //console.log('updated cache=',this.cache);
     }, refreshdata);
   }
